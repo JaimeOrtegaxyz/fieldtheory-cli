@@ -600,11 +600,27 @@ export function buildCli() {
     .description('Download media assets for bookmarks (static images only)')
     .option('--limit <n>', 'Max bookmarks to process', (v: string) => Number(v), 100)
     .option('--max-bytes <n>', 'Per-asset byte limit', (v: string) => Number(v), 50 * 1024 * 1024)
+    .option('--author <handle>', 'Filter by author handle')
+    .option('--category <category>', 'Filter by category')
+    .option('--domain <domain>', 'Filter by subject domain')
+    .option('--query <query>', 'Text query (FTS5 syntax)')
+    .option('--after <date>', 'Posted after (YYYY-MM-DD)')
+    .option('--before <date>', 'Posted before (YYYY-MM-DD)')
+    .option('--output <folder>', 'Output subfolder name (skips interactive prompt)')
+    .option('--no-profile', 'Skip author profile images, download only tweet media')
     .action(safe(async (options) => {
       if (!requireData()) return;
       const result = await fetchBookmarkMediaBatch({
         limit: Number(options.limit) || 100,
         maxBytes: Number(options.maxBytes) || 50 * 1024 * 1024,
+        author: options.author,
+        category: options.category,
+        domain: options.domain,
+        query: options.query,
+        after: options.after,
+        before: options.before,
+        output: options.output,
+        includeProfile: options.profile,
       });
       console.log(JSON.stringify(result, null, 2));
     }));
